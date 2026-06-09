@@ -27,7 +27,7 @@ def buscar_por_titulo(titulo: str):
 @app.post("/livros", response_model=LivroResposta)
 def cadastrar_livro(livro: Livro):
     global contador_id
-    novo = {"id": contador_id, **livro.dict()}
+    novo = {"id": contador_id, **livro.model_dump()}
     livros.append(novo)
     contador_id += 1
     return novo
