@@ -1,7 +1,5 @@
 from fastapi.testclient import TestClient
-import sys
-sys.path.append("src")
-from main import app
+from src.main import app
 
 client = TestClient(app)
 
@@ -25,10 +23,13 @@ def test_buscar_por_titulo():
     assert r.status_code == 200
 
 def test_alterar_status():
-    client.post("/livros", json={"titulo": "Livro X", "autor": "Autor"})
-    r = client.put("/livros/1/status?disponivel=false")
+    r = client.post("/livros", json={"titulo": "Livro X", "autor": "Autor"})
+    livro_id = r.json()["id"]
+    r = client.put(f"/livros/{livro_id}/status?disponivel=false")
     assert r.status_code == 200
 
 def test_remover_livro():
-    r = client.delete("/livros/1")
+    r = client.post("/livros", json={"titulo": "Livro Y", "autor": "Autor"})
+    livro_id = r.json()["id"]
+    r = client.delete(f"/livros/{livro_id}")
     assert r.status_code == 200
