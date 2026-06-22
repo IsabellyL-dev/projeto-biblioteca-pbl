@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Biblioteca</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h1>📚 Sistema de Biblioteca</h1>
+        <p>Gerencie seus livros de forma simples</p>
+    </header>
+
+    <main>
+
+        <!-- Busca -->
+        <section class="busca">
+            <input 
+                type="text" 
+                id="buscarLivro" 
+                placeholder="Digite o título do livro"
+            >
+            <button onclick="buscarLivro()">Buscar</button>
+            <button onclick="listarLivros()">Mostrar todos</button>
+        </section>
+
+        <!-- Cadastro -->
+        <section class="cadastro">
+            <h2>Cadastrar novo livro</h2>
+
+            <input 
+                type="text" 
+                id="titulo" 
+                placeholder="Título do livro"
+            >
+
+            <input 
+                type="text" 
+                id="autor" 
+                placeholder="Autor do livro"
+            >
+
+            <button onclick="adicionarLivro()">
+                Adicionar Livro
+            </button>
+        </section>
+
+        <!-- Lista dos livros -->
+        <section>
+            <h2>Lista de Livros</h2>
+            <div id="listaLivros">
+                <!-- Os livros vão aparecer aqui pelo JavaScript -->
+            </div>
+        </section>
+
+    </main>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
