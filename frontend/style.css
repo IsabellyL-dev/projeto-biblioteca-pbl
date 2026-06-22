@@ -1,94 +1,381 @@
+/* ====================================================================
+   SISTEMA DE BIBLIOTECA — identidade visual
+   Conceito: o site é uma "sala de leitura" (verde profundo) onde cada
+   formulário e cada livro aparece como papel sobre a mesa — fichas de
+   catálogo de biblioteca antiga, com furo de fixação, carimbo de
+   disponibilidade e tipografia de máquina de escrever.
+   ==================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap');
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f3f4f6;
-    color: #333;
+:root {
+    /* Cores */
+    --color-bg: #213326;            /* verde sala de leitura */
+    --color-bg-soft: #2c4332;       /* verde mais claro, pro degradê do fundo */
+    --color-paper: #f7f1e1;         /* papel/ficha creme */
+    --color-paper-soft: #efe6cc;    /* creme um pouco mais escuro */
+    --color-ink: #2a2118;           /* tinta escura (texto principal) */
+    --color-ink-soft: #5b5142;      /* tinta mais clara (texto secundário) */
+    --color-cream-text: #f2ecda;    /* texto claro sobre o fundo verde */
+    --color-brass: #c9a227;         /* latão / dourado dos detalhes */
+    --color-brass-dark: #9c7b1a;    /* latão escuro (hover) */
+    --color-stamp-green: #2f6b3d;   /* tinta do carimbo "disponível" */
+    --color-stamp-red: #9c3a33;     /* tinta do carimbo "indisponível" / exclusão */
+    --color-line: rgba(42, 33, 24, 0.16);
+
+    /* Tipografia */
+    --font-display: 'Playfair Display', Georgia, serif;
+    --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+    --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+
+    /* Outros */
+    --radius-card: 3px;
+    --shadow-card: 0 1px 2px rgba(33, 51, 38, 0.4), 0 10px 22px -12px rgba(33, 51, 38, 0.55);
 }
 
+body {
+    font-family: var(--font-body);
+    color: var(--color-ink);
+    background: radial-gradient(circle at 50% -10%, var(--color-bg-soft), var(--color-bg) 60%);
+    min-height: 100vh;
+    line-height: 1.5;
+}
+
+::selection {
+    background: var(--color-brass);
+    color: var(--color-ink);
+}
+
+/* Foco visível para acessibilidade (navegação por teclado) */
+button:focus-visible,
+input:focus-visible {
+    outline: 3px solid var(--color-brass);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+/* ---------------------------------------------------------------------
+   CABEÇALHO — como a etiqueta de latão de uma gaveta de fichário
+   --------------------------------------------------------------------- */
+
 header {
-    background-color: #2563eb;
-    color: white;
     text-align: center;
-    padding: 30px;
+    padding: clamp(28px, 6vw, 48px) 20px 26px;
+    border-bottom: 3px double var(--color-brass);
 }
 
 header h1 {
+    font-family: var(--font-display);
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    color: var(--color-cream-text);
+    font-size: clamp(1.6rem, 1.1rem + 2.4vw, 2.5rem);
     margin-bottom: 10px;
 }
 
-main {
-    width: 80%;
-    max-width: 900px;
-    margin: 30px auto;
+header p {
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-size: clamp(0.66rem, 0.6rem + 0.3vw, 0.8rem);
+    color: var(--color-brass);
 }
 
+/* ---------------------------------------------------------------------
+   LAYOUT PRINCIPAL
+   Busca e Cadastro ficam lado a lado em telas largas; a lista de
+   livros sempre ocupa a largura toda, abaixo dos dois formulários.
+   --------------------------------------------------------------------- */
+
+main {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: clamp(18px, 3vw, 28px);
+    width: min(94%, 1100px);
+    margin: clamp(24px, 4vw, 40px) auto;
+}
+
+main > section:last-of-type {
+    grid-column: 1 / -1;
+}
+
+/* Toda section é uma "ficha" de papel sobre a mesa verde */
 section {
-    background-color: white;
-    padding: 20px;
-    margin-bottom: 25px;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    background-color: var(--color-paper);
+    padding: clamp(18px, 3vw, 24px) clamp(16px, 3vw, 22px);
+    border-radius: var(--radius-card);
+    border-left: 4px solid var(--color-brass);
+    box-shadow: var(--shadow-card);
 }
 
 h2 {
-    margin-bottom: 15px;
-    color: #2563eb;
+    font-family: var(--font-display);
+    color: var(--color-ink);
+    font-size: 1.25rem;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--color-line);
 }
 
-input {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 12px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 16px;
+/* ---------------------------------------------------------------------
+   FORMULÁRIOS (Busca e Cadastro)
+   Flexbox com flex-basis controla o empilhamento responsivo sem
+   precisar de media queries: o título e o botão final ocupam a linha
+   toda; os campos do meio se ajustam lado a lado quando há espaço.
+   --------------------------------------------------------------------- */
+
+.busca,
+.cadastro {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: flex-start;
 }
+
+.cadastro h2 {
+    flex: 1 1 100%;
+}
+
+.busca input,
+.cadastro input {
+    flex: 1 1 200px;
+}
+
+.cadastro button {
+    flex: 1 1 100%;
+}
+
+/* Campos de texto: estilo "linha pra preencher", como num formulário de papel */
+input[type="text"] {
+    border: none;
+    border-bottom: 2px solid var(--color-line);
+    border-radius: 0;
+    background: transparent;
+    padding: 10px 2px;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    color: var(--color-ink);
+    transition: border-color 0.2s ease;
+}
+
+input[type="text"]:hover {
+    border-bottom-color: var(--color-ink-soft);
+}
+
+input[type="text"]:focus {
+    border-bottom-color: var(--color-brass);
+}
+
+input::placeholder {
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 0.7rem;
+    color: var(--color-ink-soft);
+    opacity: 0.75;
+}
+
+/* ---------------------------------------------------------------------
+   BOTÕES
+   Estilo "carimbo/etiqueta" em mono espaçado. A função de cada botão
+   é diferenciada pela posição (1º x último), já que o HTML não usa
+   classes — assim continuamos sem precisar alterar o HTML/JS.
+   --------------------------------------------------------------------- */
 
 button {
-    background-color: #2563eb;
-    color: white;
-    border: none;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    font-weight: 600;
+    font-size: 0.76rem;
     padding: 12px 18px;
-    margin-right: 10px;
-    border-radius: 6px;
+    border: 2px solid var(--color-ink);
+    border-radius: 2px;
+    background: transparent;
+    color: var(--color-ink);
     cursor: pointer;
-    font-size: 15px;
-    transition: 0.3s;
+    transition: background-color 0.22s ease, color 0.22s ease, border-color 0.22s ease, transform 0.15s ease;
 }
 
 button:hover {
-    background-color: #1e40af;
+    transform: translateY(-1px);
 }
 
+/* Ações principais: Buscar e Adicionar Livro */
+.busca button:first-of-type,
+.cadastro button {
+    background: var(--color-brass);
+    border-color: var(--color-brass);
+    color: var(--color-ink);
+}
+
+.busca button:first-of-type:hover,
+.cadastro button:hover {
+    background: var(--color-brass-dark);
+    border-color: var(--color-brass-dark);
+}
+
+/* Ação secundária: Mostrar todos */
+.busca button:last-of-type:hover {
+    background: var(--color-ink);
+    color: var(--color-paper);
+}
+
+/* ---------------------------------------------------------------------
+   LISTA DE LIVROS — grade responsiva de fichas
+   --------------------------------------------------------------------- */
+
 #listaLivros {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 18px;
+}
+
+#listaLivros p {
+    grid-column: 1 / -1;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.05rem;
+    color: var(--color-ink-soft);
+    text-align: center;
+    padding: 36px 10px;
 }
 
 .livro {
-    border: 1px solid #ddd;
-    padding: 15px;
-    border-radius: 8px;
-    background-color: #fafafa;
+    position: relative;
+    background: var(--color-paper-soft);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    padding: 30px 18px 16px;
+    box-shadow: var(--shadow-card);
+    animation: cardIn 0.35s ease both;
+    transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+
+.livro:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 4px rgba(33, 51, 38, 0.35), 0 16px 28px -14px rgba(33, 51, 38, 0.6);
+}
+
+/* "Furo" de fixação, como nas fichas de catálogo de biblioteca antiga */
+.livro::before {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--color-bg);
+    box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.45), 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
 .livro h3 {
-    color: #2563eb;
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    color: var(--color-ink);
+    margin-bottom: 6px;
+}
+
+.livro p {
+    font-size: 0.88rem;
+    color: var(--color-ink-soft);
     margin-bottom: 8px;
 }
 
+.livro p strong {
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    color: var(--color-brass-dark);
+    font-weight: 600;
+}
+
+/* Carimbo de status */
+.disponivel,
+.indisponivel {
+    display: inline-block;
+    position: relative;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.74rem;
+    padding: 6px 14px;
+    border: 2px solid currentColor;
+    border-radius: 2px;
+    transform: rotate(-4deg);
+    margin: 8px 0 4px;
+}
+
+.disponivel::after,
+.indisponivel::after {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    border: 1px solid currentColor;
+    border-radius: 1px;
+    opacity: 0.55;
+}
+
 .disponivel {
-    color: green;
-    font-weight: bold;
+    color: var(--color-stamp-green);
 }
 
 .indisponivel {
-    color: red;
-    font-weight: bold;
+    color: var(--color-stamp-red);
+}
+
+/* Botões dentro de cada ficha de livro */
+.livro button {
+    font-size: 0.68rem;
+    padding: 8px 14px;
+    margin-top: 8px;
+    margin-right: 8px;
+}
+
+.livro button:first-of-type:hover {
+    background: var(--color-stamp-green);
+    border-color: var(--color-stamp-green);
+    color: var(--color-paper);
+}
+
+.livro button:last-of-type {
+    border-color: var(--color-stamp-red);
+    color: var(--color-stamp-red);
+}
+
+.livro button:last-of-type:hover {
+    background: var(--color-stamp-red);
+    color: var(--color-paper);
+}
+
+/* ---------------------------------------------------------------------
+   ANIMAÇÃO + ACESSIBILIDADE DE MOVIMENTO
+   --------------------------------------------------------------------- */
+
+@keyframes cardIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.001ms !important;
+        transition-duration: 0.001ms !important;
+    }
 }
